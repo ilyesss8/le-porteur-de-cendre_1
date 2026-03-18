@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Le Porteur de Cendre</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100vh; background: #000; }
+
+    :root {
+      --bg: radial-gradient(ellipse at 50% 60%, #1a0a00 0%, #0d0d0d 60%, #000 100%);
+      --particle: #c8601a;
+    }
+
+    body {
+      font-family: 'Crimson Pro', Georgia, serif;
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow-x: hidden;
+      transition: background 1.4s ease;
+    }
+
+    #particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .particle {
+      position: absolute;
+      bottom: -10px;
+      border-radius: 50%;
+      animation: floatUp linear infinite;
+    }
+
+    @keyframes floatUp {
+      0%   { transform: translateY(0) translateX(0); opacity: 0; }
+      10%  { opacity: 0.8; }
+      90%  { opacity: 0.3; }
+      100% { transform: translateY(-100vh) translateX(20px); opacity: 0; }
+    }
+
+    .vignette {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse at center, transparent 25%, rgba(0,0,0,0.88) 100%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .progress-bar {
+      position: fixed;
+      top: 0; left: -60%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #c8601a, transparent);
+      width: 60%;
+      z-index: 10;
+      animation: scanline 4s ease-in-out infinite;
+    }
+    @keyframes scanline {
+      0% { left: -60%; }
+      100% { left: 100%; }
+    }
+
+    #app {
+      position: relative;
+      z-index: 2;
+      max-width: 720px;
+      width: 90%;
+      padding: 60px 0;
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    #app.fade-out { opacity: 0; transform: translateY(14px); }
+
+    /* ── INTRO ── */
+    .intro-card { text-align: center; padding: 80px 40px; }
+
+    .eyebrow {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 9px;
+      letter-spacing: 6px;
+      color: #8a5a30;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .big-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(26px, 6vw, 50px);
+      color: #e8d5b0;
+      letter-spacing: 4px;
+      line-height: 1.2;
+      text-shadow: 0 0 60px rgba(200,96,26,0.4), 0 0 120px rgba(200,96,26,0.15);
+      margin-bottom: 16px;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: #6a5040;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      font-style: italic;
+      margin-bottom: 60px;
+    }
+
+    .ornament {
+      font-size: 14px;
+      color: rgba(138,96,64,0.4);
+      letter-spacing: 12px;
+      margin-bottom: 40px;
+    }
+
+    .intro-q {
+      font-size: 20px;
+      color: #c8a878;
+      font-style: italic;
+      margin-bottom: 32px;
+    }
+
+    .name-row {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .name-input {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(200,96,26,0.3);
+      border-radius: 2px;
+      padding: 14px 20px;
+      font-family: 'Crimson Pro', serif;
+      font-size: 18px;
+      color: #e8d5b0;
+      outline: none;
+      width: 240px;
+      transition: border-color 0.3s;
+    }
+    .name-input::placeholder { color: #4a3a2a; }
+    .name-input:focus { border-color: rgba(200,96,26,0.7); }
+
+    .btn-start {
+      background: transparent;
+      border: 1px solid rgba(200,96,26,0.5);
+      border-radius: 2px;
+      padding: 14px 28px;
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: #c8601a;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.3s;
+    }
+    .btn-start:hover {
+      background: rgba(200,96,26,0.12);
+      border-color: rgba(200,96,26,0.9);
+      color: #e8801a;
+    }
+
+    /* ── SCENE ── */
+    .chapter-label {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 8px;
+      letter-spacing: 5px;
+      color: #5a3a20;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .chapter-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: #8a6040;
+      text-transform: uppercase;
+      font-weight: 400;
+      margin-bottom: 48px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid rgba(138,96,64,0.2);
+    }
+
+    #scene-text {
+      font-size: clamp(16px, 2.5vw, 19px);
+      line-height: 1.9;
+      color: #d8c8a8;
+      white-space: pre-line;
+      font-weight: 300;
+      margin-bottom: 56px;
+      min-height: 160px;
+      cursor: pointer;
+    }
+
+    #scene-text.climax { color: #c8e8c0; text-shadow: 0 0 30px rgba(0,100,40,0.3); }
+
+    .cursor-blink {
+      color: #c8601a;
+      animation: blink 0.8s step-end infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    .skip-hint {
+      font-size: 11px;
+      color: #4a3a28;
+      letter-spacing: 2px;
+      margin-top: 14px;
+      text-transform: uppercase;
+    }
+
+    #choices {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    #choices.visible { opacity: 1; transform: translateY(0); }
+
+    .choice-btn {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(200,180,140,0.12);
+      border-left: 2px solid rgba(200,96,26,0.3);
+      border-radius: 2px;
+      padding: 18px 24px;
+      font-family: 'Crimson Pro', serif;
+      font-size: 17px;
+      color: #b89a70;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .choice-btn::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 0;
+      background: rgba(200,96,26,0.06);
+      transition: width 0.3s ease;
+    }
+    .choice-btn:hover::before { width: 100%; }
+    .choice-btn:hover {
+      border-left-color: rgba(200,96,26,0.9);
+      color: #e8c888;
+      border-color: rgba(200,160,100,0.25);
+    }
+    .choice-btn.selected {
+      border-left-color: #c8601a;
+      color: #e8c888;
+      background: rgba(200,96,26,0.08);
+    }
+    .choice-btn:disabled { cursor: default; }
+
+    .end-card {
+      margin-top: 56px;
+      padding-top: 32px;
+      border-top: 1px solid rgba(138,96,64,0.2);
+      text-align: center;
+    }
+    .end-msg {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 10px;
+      letter-spacing: 4px;
+      color: #6a4a28;
+      text-transform: uppercase;
+      animation: glow 3s ease-in-out infinite;
+    }
+    @keyframes glow { 0%,100%{opacity:0.4} 50%{opacity:1} }
+  </style>
+</head>
+<body>
+
+<div class="progress-bar"></div>
+<div id="particles"></div>
+<div class="vignette"></div>
+<div id="app"></div>
+
+<script>
+// ── BG PALETTES ──────────────────────────────────────────────────────────────
+const BG = {
+  ash:            { bg: "radial-gradient(ellipse at 50% 60%, #1a0a00 0%, #0d0d0d 60%, #000 100%)", p: "#c8601a" },
+  night:          { bg: "radial-gradient(ellipse at 30% 20%, #0a0a1a 0%, #050510 60%, #000 100%)", p: "#3a3a8a" },
+  corridor:       { bg: "linear-gradient(180deg, #050508 0%, #0a0510 50%, #0d0608 100%)",          p: "#4a1a6a" },
+  soren_room:     { bg: "radial-gradient(ellipse at 50% 80%, #1a0000 0%, #0d0005 50%, #000 100%)", p: "#8a1010" },
+  room_dark:      { bg: "linear-gradient(135deg, #02020a 0%, #060308 100%)",                       p: "#1a1a3a" },
+  moment_of_truth:{ bg: "radial-gradient(ellipse at 50% 50%, #0d0800 0%, #080600 40%, #000 100%)", p: "#5a4000" },
+  transcendence:  { bg: "radial-gradient(ellipse at 50% 50%, #000800 0%, #000500 40%, #000 100%)", p: "#003a10" },
+  dawn:           { bg: "linear-gradient(180deg, #0a0500 0%, #150a02 40%, #0a0800 100%)",          p: "#603010" },
+};
+
+// ── SCENES ───────────────────────────────────────────────────────────────────
+const SCENES = {
+  intro: {
+    type: "intro", bg: "ash",
+    title: "LE PORTEUR DE CENDRE",
+    subtitle: "Une histoire dont vous êtes le héros malgré vous",
+    text: "Avant de commencer, comment t'appelles-tu ?",
+    next: "scene_1",
+  },
+  scene_1: {
+    chapter: "CHAPITRE I", chapterTitle: "Une nuit comme les autres", bg: "night",
+    text: n => `23h47. ${n} fixe son écran depuis six heures. Dissertation sur Nietzsche, à rendre demain matin. Il n'a pas écrit une ligne.\n\nSon téléphone vibre. C'est Sören — son voisin de pallier, 60 ans, excentrique, amateur de vieilles pierres et de café trop fort. Un message, sans bonjour :\n\n« Viens. Maintenant. C'est important. »\n\nTrois secondes plus tard, un second message :\n\n« Non. En fait. Cours. »`,
+    choices: [
+      { id:"go",   text:"🏃 Courir chez Sören sans réfléchir",              next:"scene_2a" },
+      { id:"text", text:"📱 Lui répondre d'abord — savoir ce qui se passe", next:"scene_2b" },
+      { id:"ign",  text:"😮‍💨 Ignorer. Sören est toujours dramatique.",       next:"scene_2c" },
+    ],
+  },
+  scene_2a: {
+    chapter:"CHAPITRE I", bg:"corridor",
+    text: n => `${n} attrape ses clés et sort en courant.\n\nLe couloir est plongé dans une obscurité inhabituelle. Les ampoules clignotent. L'air sent la pluie et quelque chose d'autre — minéral, ancien, comme de la pierre brûlée.\n\nDevant la porte de Sören : entrouverte. Un filet de lumière rouge en filtre.\n\nÀ l'intérieur, une voix — grave, rauque, pas celle de Sören — répète quelque chose en boucle dans une langue inconnue.`,
+    choices: [
+      { id:"enter",  text:"🚪 Entrer directement",                  next:"scene_3a" },
+      { id:"listen", text:"👂 S'arrêter et écouter avant d'entrer", next:"scene_3b" },
+    ],
+  },
+  scene_2b: {
+    chapter:"CHAPITRE I", bg:"corridor",
+    text: n => `${n} tape : « Qu'est-ce qui se passe ? »\n\nPas de réponse. Les trois petits points apparaissent… puis disparaissent. Réapparaissent. Disparaissent encore.\n\nFinalement : un seul mot.\n\n« Désolé. »\n\nUn frisson traverse ${n}. Sören n'est pas du genre à s'excuser. Jamais.\n\nIl attrape ses clés et file dans le couloir. Devant la porte de Sören : entrouverte. Un filet de lumière rouge en filtre.`,
+    choices: [
+      { id:"enter",  text:"🚪 Entrer directement",                  next:"scene_3a" },
+      { id:"listen", text:"👂 S'arrêter et écouter avant d'entrer", next:"scene_3b" },
+    ],
+  },
+  scene_2c: {
+    chapter:"CHAPITRE I", bg:"room_dark",
+    text: n => `${n} pose son téléphone face contre le bureau. Nietzsche. Concentration.\n\nDix minutes passent.\n\nPuis un bruit sourd traverse le mur — quelque chose tombe. Puis le silence. Un silence trop épais, trop absolu pour 23h dans un immeuble parisien.\n\nEt enfin : un cri. Court. Étouffé. La voix de Sören.\n\n${n} est déjà debout avant d'avoir décidé de bouger.`,
+    choices: [
+      { id:"rush", text:"🏃 Foncer chez Sören", next:"scene_3a" },
+    ],
+  },
+  scene_3b: {
+    chapter:"CHAPITRE I", bg:"corridor",
+    text: () => `Collé à la porte entrouverte, on entend la voix répéter encore et encore la même phrase.\n\nEt soudain — un mot émerge du brouillard sonore, compris sans savoir comment :\n\n« …porteur… »\n\nUn frisson glacé remonte le long de la colonne vertébrale.`,
+    choices: [
+      { id:"enter", text:"🚪 Pousser la porte.", next:"scene_3a" },
+    ],
+  },
+  scene_3a: {
+    chapter:"CHAPITRE I", bg:"soren_room",
+    text: n => `${n} pousse la porte.\n\nSören est à genoux au centre de la pièce. Autour de lui : des livres ouverts, des cartes étalées, des bougies rouges. Et au sol, tracé à la craie blanche, un cercle parfait couvert de symboles — qui, étrangement, semblent familiers.\n\nFace à Sören : une silhouette. Trop haute. Les traits impossibles à fixer, comme si les yeux refusaient de les regarder.\n\nDans la main de Sören : un petit fragment noir. En forme d'os. Il pulse faiblement — comme un cœur.\n\n— « Tu n'aurais pas dû venir », dit Sören sans lever les yeux. « Mais je savais que tu viendrais. »`,
+    choices: [
+      { id:"ask_what", text:"❓ « Qu'est-ce que c'est que ce bordel ? »",   next:"scene_4a" },
+      { id:"ask_who",  text:"👁️ Fixer la silhouette — « Qui es-tu ? »",    next:"scene_4b" },
+      { id:"grab",     text:"🤝 Se précipiter vers Sören pour l'aider",     next:"scene_4c" },
+    ],
+  },
+  scene_4a: {
+    chapter:"CHAPITRE I", bg:"soren_room",
+    text: n => `— « Ce bordel », dit Sören avec un sourire triste, « c'est la fin d'une erreur vieille de trois mille ans. »\n\nIl lève enfin les yeux vers ${n}. Ses iris ont changé. Ils sont dorés.\n\n— « Je gardais la Cendre pour lui. Mais il est venu la reprendre. »\n\nLa silhouette fait un pas en avant. L'air se solidifie. ${n} ne peut plus bouger les jambes.\n\n— « Si elle retourne dans le Dehors, tout ce que tu connais disparaît. Chaque rêve. Chaque souvenir. Chaque visage. » Une pause. « Je suis désolé, ${n}. Il n'y a qu'une seule issue. »`,
+    choices: [
+      { id:"refuse", text:"😰 « Non. Non non non. Je suis juste étudiant. »", next:"scene_5" },
+      { id:"accept", text:"😤 « Dis-moi ce que je dois faire. »",              next:"scene_5" },
+    ],
+  },
+  scene_4b: {
+    chapter:"CHAPITRE I", bg:"soren_room",
+    text: () => `La silhouette tourne la tête.\n\nEt là — une fraction de seconde — on la voit vraiment.\n\nPas un visage. Une absence de visage. Un vide en forme humaine, d'où filtre quelque chose d'immense et d'indifférent — comme regarder à travers un trou percé dans le tissu du monde.\n\nUn pas en arrière. Les mains tremblent.\n\n— « Il ne peut pas te répondre », dit Sören calmement. « Il ne parle pas. Il prend. C'est tout ce qu'il sait faire. »\n\nIl serre le fragment dans son poing — il pulse plus vite, rouge sombre.\n\n— « Je suis désolé de t'avoir mêlé à ça. Mais tu es la seule option qui reste. »`,
+    choices: [
+      { id:"refuse", text:"😰 « Non. Non non non. Je suis juste étudiant. »", next:"scene_5" },
+      { id:"accept", text:"😤 « Dis-moi ce que je dois faire. »",              next:"scene_5" },
+    ],
+  },
+  scene_4c: {
+    chapter:"CHAPITRE I", bg:"soren_room",
+    text: n => `${n} fait un pas vers Sören — et quelque chose l'arrête net. Pas une main. Pas un mur. Une pression dans l'air, comme si l'espace lui-même refusait qu'il avance.\n\nSören lève une main ouverte.\n\n— « N'entre pas dans le cercle. Si tu entres, c'est fini. »\n\nLe fragment dans sa paume pulse de plus en plus vite — rouge, rouge, rouge.\n\n— « Il me reste trente secondes avant qu'il le reprenne. Si la Cendre retourne dans le Dehors, le monde tel que tu le connais disparaît. Chaque souvenir. Chaque lumière. » Sa voix se brise. « Tu es la seule option, ${n}. Je ne sais pas pourquoi toi. Je sais juste que c'est toi. »`,
+    choices: [
+      { id:"refuse", text:"😰 « Non. Non non non. Je suis juste étudiant. »", next:"scene_5" },
+      { id:"accept", text:"😤 « Dis-moi ce que je dois faire. »",              next:"scene_5" },
+    ],
+  },
+  scene_5: {
+    chapter:"CHAPITRE I — POINT DE BASCULE", bg:"moment_of_truth",
+    text: n => `Sören se lève. Ses genoux tremblent. La silhouette avance — les bougies s'éteignent une par une.\n\nIl tend la main vers ${n}. Dans sa paume : le fragment noir. De près, on voit qu'il est couvert de minuscules gravures — des visages, des milliers de visages dans l'os.\n\n— « Elle s'appelle la Cendre du Premier. Le tout premier être conscient de l'univers — avant les dieux, avant les hommes. Il a voulu être oublié. Alors il s'est consumé. Mais on ne peut pas détruire une conscience. Elle reste. Elle attend. Et Lui... » — un regard vers la silhouette — « ...il veut la récupérer pour s'en repaître. »\n\nLa silhouette tend la main à son tour.\n\n— « Si tu l'avales, tu la portes. Tu la protèges. Ça ne te donnera aucun pouvoir. Aucune magie. Juste... une cible dans le dos pour le restant de ta vie. »\n\nUn silence.\n\n— « Je suis désolé, ${n}. Vraiment. »`,
+    choices: [
+      { id:"yes", text:"⚫ Prendre le fragment. L'avaler.",          next:"scene_6"        },
+      { id:"no",  text:"🚫 Reculer. Refuser. Ce n'est pas ta vie.", next:"scene_6_refuse"  },
+    ],
+  },
+  scene_6_refuse: {
+    chapter:"CHAPITRE I", bg:"room_dark",
+    text: n => `— « Non. »\n\nLe mot sort comme un réflexe. Ferme. Définitif.\n\n— « Je rentre chez moi. Je finis ma dissert. Demain matin j'ai un partiel. »\n\nSören ferme les yeux.\n\nLa silhouette est à un mètre. L'air brûle.\n\n${n} fait demi-tour. Il marche jusqu'à la porte. L'ouvre. Fait trois pas dans le couloir.\n\nEt là — ses jambes s'arrêtent. Ses poumons aussi. Quelque chose dans sa poitrine tire. Comme un fil tendu entre lui et la pièce derrière.\n\nLa curiosité.\n\nCette satanée curiosité qu'il n'a jamais su étouffer.\n\nIl se retourne.`,
+    choices: [
+      { id:"back", text:"↩️ Revenir dans la pièce.", next:"scene_5_return" },
+    ],
+  },
+  scene_5_return: {
+    chapter:"CHAPITRE I", bg:"moment_of_truth",
+    text: n => `Sören n'a pas bougé. Il tient encore le fragment.\n\nLa silhouette est à trente centimètres de lui.\n\nSören lève les yeux vers ${n}. Un sourire — triste, doux, résigné.\n\n— « Je savais que tu reviendrais. »`,
+    choices: [
+      { id:"yes", text:"⚫ Prendre le fragment. L'avaler.", next:"scene_6" },
+    ],
+  },
+  scene_6: {
+    chapter:"CHAPITRE I — L'ÉLECTION", bg:"transcendence", isClimax:true,
+    text: n => `${n} prend le fragment.\n\nIl est froid. Incroyablement froid — comme tenir un morceau de vide entre les doigts.\n\nIl le pose sur sa langue.\n\nIl avale.\n\n—\n\nPendant une demi-seconde : rien.\n\nPuis —\n\nTout.\n\nPas de lumière. Pas d'explosion. Pas de pouvoir qui se déverse dans les veines. Juste... une présence. Ancienne, immense, parfaitement silencieuse. Comme si quelqu'un s'installait dans une pièce vide de son esprit et s'y asseyait sans un mot.\n\nLa silhouette s'arrête net. Quelque chose dans sa posture ressemble à de l'hésitation.\n\nElle recule. Un pas. Deux.\n\nEt disparaît — comme une flamme qu'on souffle.\n\nSören s'effondre sur les genoux. Il rit — ou pleure, difficile à dire.\n\n— « C'est fait. Tu es le Porteur. » Il lève les yeux. « Il reviendra. Et il n'est pas seul. »\n\nUn temps.\n\n— « Bienvenue dans le monde réel, ${n}. »`,
+    choices: [
+      { id:"next",   text:"🔥 « C'est quoi la suite ? »",                                    next:"epilogue"       },
+      { id:"whyme",  text:"😶 « Pourquoi moi ? Qu'est-ce que j'ai de spécial ? »",           next:"epilogue_whyme" },
+    ],
+  },
+  epilogue: {
+    chapter:"FIN DU CHAPITRE I", bg:"dawn", isEnd:true,
+    text: n => `Sören se relève. Il attrape un vieux carnet et le tend à ${n}.\n\n— « La suite ? Tu continues ta vie. Tu vas en cours. Tu manges. Tu dors. » Une pause. « Et tu apprends à reconnaître ceux qui viennent pour toi. Parce qu'ils viendront. »\n\n${n} regarde le carnet. Sur la couverture : le même symbole que ceux tracés sur le sol. Le même que ceux gravés sur le fragment qu'il a avalé.\n\n— « Ce carnet appartenait au Porteur précédent. Elle s'appelait Mila. Elle a tenu quarante ans. »\n\nUne pause significative.\n\n— « C'est le record. »\n\n${n} fixe le carnet.\n\n${n} rentre chez lui à 2h17 du matin.\n\nIl ouvre un nouvel onglet.\n\nIl n'écrit pas sa dissertation.`,
+    endMsg:"Chapitre II — bientôt disponible",
+  },
+  epilogue_whyme: {
+    chapter:"FIN DU CHAPITRE I", bg:"dawn", isEnd:true,
+    text: n => `Sören le regarde longtemps. Puis :\n\n— « Honnêtement ? Je ne sais pas. »\n\nUn silence.\n\n— « Le Porteur précédent s'appelait Mila. Neurochirurgienne. Brillante. Elle pensait que c'était pour ça qu'elle avait été choisie. » Il secoue la tête. « Avant elle, c'était un berger analphabète du XVIe siècle. Avant lui, une enfant de huit ans à Carthage. »\n\nIl croise les mains.\n\n— « Aucun point commun. Aucune logique. La Cendre ne cherche pas le meilleur. Elle cherche... quelque chose qu'on ne sait pas nommer. »\n\nIl regarde ${n} dans les yeux.\n\n— « Peut-être que c'est justement le fait que tu n'es rien de spécial. Que tu n'as aucune raison d'être là. » Un demi-sourire. « Peut-être que c'est ça, la protection ultime. »\n\n${n} rentre chez lui à 2h17 du matin.\n\nIl s'assoit dans le noir pendant une heure.\n\nPuis il cherche sur Google : "Premier être conscient univers mythe"\n\nIl a 4 millions de résultats.\n\nIl commence à lire.`,
+    endMsg:"Chapitre II — bientôt disponible",
+  },
+};
+
+// ── STATE ────────────────────────────────────────────────────────────────────
+let state = {
+  sceneId: "intro",
+  playerName: "",
+  textDone: false,
+  choicesVisible: false,
+  selectedChoice: null,
+  transitioning: false,
+  typewriterTimer: null,
+  typewriterIdx: 0,
+};
+
+// ── PARTICLES ────────────────────────────────────────────────────────────────
+function spawnParticles(color) {
+  const container = document.getElementById("particles");
+  container.innerHTML = "";
+  for (let i = 0; i < 20; i++) {
+    const p = document.createElement("div");
+    p.className = "particle";
+    p.style.cssText = `
+      left:${Math.random()*100}%;
+      animation-delay:${Math.random()*8}s;
+      animation-duration:${6+Math.random()*8}s;
+      background:${color};
+      width:${1+Math.random()*2}px;
+      height:${1+Math.random()*2}px;
+      opacity:${0.3+Math.random()*0.5};
+    `;
+    container.appendChild(p);
+  }
+}
+
+// ── TYPEWRITER ────────────────────────────────────────────────────────────────
+function startTypewriter(text, onDone) {
+  clearInterval(state.typewriterTimer);
+  state.typewriterIdx = 0;
+  state.textDone = false;
+
+  const el = document.getElementById("scene-text");
+  el.innerHTML = '<span id="tw-content"></span><span class="cursor-blink">▌</span><div class="skip-hint">Cliquer pour passer</div>';
+
+  const content = document.getElementById("tw-content");
+
+  el.onclick = () => {
+    clearInterval(state.typewriterTimer);
+    content.textContent = text;
+    el.innerHTML = text.replace(/\n/g,"<br>");
+    state.textDone = true;
+    el.onclick = null;
+    onDone();
+  };
+
+  state.typewriterTimer = setInterval(() => {
+    if (state.typewriterIdx < text.length) {
+      content.textContent = text.slice(0, state.typewriterIdx + 1);
+      state.typewriterIdx++;
+    } else {
+      clearInterval(state.typewriterTimer);
+      el.innerHTML = text.replace(/\n/g,"<br>");
+      state.textDone = true;
+      el.onclick = null;
+      onDone();
+    }
+  }, 18);
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+function render() {
+  const scene = SCENES[state.sceneId];
+  const app = document.getElementById("app");
+  const bg = BG[scene.bg] || BG.ash;
+
+  document.body.style.background = bg.bg;
+  spawnParticles(bg.p);
+
+  if (scene.type === "intro") {
+    app.innerHTML = `
+      <div class="intro-card">
+        <div class="eyebrow">Une histoire interactive</div>
+        <h1 class="big-title">${scene.title}</h1>
+        <div class="subtitle">${scene.subtitle}</div>
+        <div class="ornament">✦ ✦ ✦</div>
+        <div class="intro-q">${scene.text}</div>
+        <div class="name-row">
+          <input class="name-input" id="name-inp" type="text" placeholder="Ton prénom..." autocomplete="off" autofocus />
+          <button class="btn-start" id="btn-start">Commencer</button>
+        </div>
+      </div>`;
+
+    const inp = document.getElementById("name-inp");
+    const btn = document.getElementById("btn-start");
+    const submit = () => {
+      const v = inp.value.trim();
+      if (!v) return;
+      state.playerName = v;
+      goTo(scene.next);
+    };
+    btn.addEventListener("click", submit);
+    inp.addEventListener("keydown", e => e.key === "Enter" && submit());
+    return;
+  }
+
+  const text = typeof scene.text === "function" ? scene.text(state.playerName || "le joueur") : scene.text;
+
+  app.innerHTML = `
+    <div class="chapter-label">${scene.chapter || ""}</div>
+    ${scene.chapterTitle ? `<div class="chapter-title">${scene.chapterTitle}</div>` : `<div style="margin-bottom:32px"></div>`}
+    <div id="scene-text" class="${scene.isClimax ? "climax" : ""}"></div>
+    <div id="choices"></div>
+    ${scene.isEnd ? `<div id="end-card" style="display:none" class="end-card"><div class="ornament">✦ ✦ ✦</div><div class="end-msg">${scene.endMsg}</div></div>` : ""}
+  `;
+
+  startTypewriter(text, () => {
+    if (scene.choices) {
+      setTimeout(() => showChoices(scene.choices), 400);
+    }
+    if (scene.isEnd) {
+      document.getElementById("end-card").style.display = "block";
+    }
+  });
+}
+
+function showChoices(choices) {
+  const container = document.getElementById("choices");
+  container.innerHTML = choices.map(c => `
+    <button class="choice-btn" data-next="${c.next}" data-id="${c.id}">${c.text}</button>
+  `).join("");
+
+  container.querySelectorAll(".choice-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      if (state.selectedChoice) return;
+      state.selectedChoice = btn.dataset.id;
+      btn.classList.add("selected");
+      container.querySelectorAll(".choice-btn").forEach(b => b.disabled = true);
+      setTimeout(() => goTo(btn.dataset.next), 500);
+    });
+  });
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => container.classList.add("visible"));
+  });
+}
+
+function goTo(nextId) {
+  if (state.transitioning) return;
+  state.transitioning = true;
+  clearInterval(state.typewriterTimer);
+
+  const app = document.getElementById("app");
+  app.classList.add("fade-out");
+
+  setTimeout(() => {
+    state.sceneId = nextId;
+    state.selectedChoice = null;
+    state.transitioning = false;
+    app.classList.remove("fade-out");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    render();
+  }, 650);
+}
+
+// ── BOOT ──────────────────────────────────────────────────────────────────────
+render();
+</script>
+</body>
+</html>
